@@ -1,9 +1,10 @@
 from wxpy import *
-from tinydb import TinyDB, Query
-import arrow
+import datetime
+# from tinydb import TinyDB, Query
+# import arrow
 from apscheduler.schedulers.background import BackgroundScheduler
 
-bot, tuling = Bot(cache_path=True), Tuling(api_key='在此填入你的key')
+bot, tuling = Bot(cache_path=True), Tuling(api_key='4c7e082b6db749489d7ff691fb9c863b')
 # 去http://www.tuling123.com 申请你自己的api_key
 
 friends, groups, reportTo = [], ["一个亿的策马奔腾"], ["一个亿的策马奔腾"]
@@ -21,17 +22,19 @@ def searchFriends(friend_names, type_name):
 
 
 def report():
-    db = TinyDB('dailyReport.json')
-    table = db.table(arrow.utcnow().to('local').format('YYYY-MM-DD')).all()
-    if len(table) == 0:
-        print(arrow.utcnow().to('local').format('YYYY-MM-DD H:M:S'), "发送日报失败")
-        return
-
-    table = table[0]
-    contents = table["title"] + '\n' + table["contents"]
+    # db = TinyDB('dailyReport.json')
+    # table = db.table(arrow.utcnow().to('local').format('YYYY-MM-DD')).all()
+    # if len(table) == 0:
+    #     print(arrow.utcnow().to('local').format('YYYY-MM-DD H:M:S'), "发送日报失败")
+    #     return
+    r = open('report.txt', 'r')
+    contents = ''.join(r.readlines())
+    print(contents)
+    # table = table[0]
+    # contents = table["title"] + '\n' + table["contents"]
     for recipient in searchFriends(reportTo,"groups"):
-        recipient.send(contents + "\n----------- 自动发报测试")
-    print(arrow.utcnow().to('local').format('YYYY-MM-DD H:M:S'), "发送一次日报")
+        recipient.send(contents)
+    # print(arrow.utcnow().to('local').format('YYYY-MM-DD H:M:S'), "发送一次日报")
 
 
 @bot.register(searchFriends(friends, "friends") + searchFriends(groups, "groups"), TEXT)
@@ -42,14 +45,11 @@ def auto_reply(msg):
         msg.reply(tuling.reply_text(msg) + "\n---------------自动回复")
 
 
-scheduler.add_job(report, 'cron', hour=18, minute=35, id="dailyReport")
+scheduler.add_job(report, 'cron', hour=20, minute=40, id="dailyReport")
 scheduler.start()
 
 embed()
 
-if __name__ == "__main__":
-    # report()
-    pass
 
 
 
