@@ -1,12 +1,15 @@
 from wxpy import *
+import json
 import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-apikey = open('config').readline().strip()
-bot, tuling = Bot(cache_path=True), Tuling(api_key=apikey)
+config = json.load(open('config','r'))
+# load config as a json object which has api_key, friends, groups, reportTo keys.
 
-friends, groups, reportTo = [], ["一个亿的策马奔腾"], ["一个亿的策马奔腾"]
+bot, tuling = Bot(cache_path=True), Tuling(api_key=config['api_key'])
+
+friends, groups, reportTo = config['friends'], config['groups'], config['reportTo']
 
 scheduler = BackgroundScheduler()
 
@@ -36,7 +39,7 @@ def auto_reply(msg):
         msg.reply(tuling.reply_text(msg))
 
 
-scheduler.add_job(report, 'cron', hour=20, minute=40, id="dailyReport")
+scheduler.add_job(report, 'cron', hour=21, minute=10, id="dailyReport")
 scheduler.start()
 
 embed()

@@ -1,0 +1,6 @@
+{
+    "api_key" : "http://www.tuling123.com 申请你自己的api_key",
+    "friends" : ["聊天朋友"],
+    "groups" : ["聊天群组"],
+    "reportTo" : ["汇报对象"]
+}
